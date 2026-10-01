@@ -1,0 +1,10 @@
+#tubi-hover-info-root {
+  all: initial !important;
+  position: fixed !important;
+  z-index: 2147483647 !important;
+  display: block !important;
+  box-sizing: border-box !important;
+  isolation: isolate !important;
+  color-scheme: dark !important;
+}
+#tubi-hover-info-root[hidden] { display: none !important; }

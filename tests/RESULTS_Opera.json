@@ -1,0 +1,73 @@
+{
+  "browser": "Chrome/152.0.7977.120",
+  "graphics": {
+    "2d_canvas": "enabled",
+    "direct_rendering_display_compositor": "disabled_off_ok",
+    "gpu_compositing": "disabled_software",
+    "multiple_raster_threads": "enabled_on",
+    "opengl": "enabled_on",
+    "rasterization": "enabled",
+    "raw_draw": "disabled_off_ok",
+    "skia_graphite": "disabled_off",
+    "trees_in_viz": "disabled_off",
+    "video_decode": "enabled",
+    "video_encode": "enabled",
+    "webgl": "enabled_readback",
+    "webgpu": "unavailable_software",
+    "webnn": "disabled_off"
+  },
+  "checks": [
+    {
+      "name": "Actual extension content script and shadow styles load in Opera",
+      "passed": true
+    },
+    {
+      "name": "Brief pointer passes do not open a panel",
+      "passed": true
+    },
+    {
+      "name": "Movie hover displays synopsis, cast, director, year and runtime",
+      "passed": true
+    },
+    {
+      "name": "Panel stays open while reading and all-cast control expands",
+      "passed": true
+    },
+    {
+      "name": "Pin holds the selected movie while hovering a different show",
+      "passed": true
+    },
+    {
+      "name": "Escape closes a pinned panel",
+      "passed": true
+    },
+    {
+      "name": "TV-show hover displays cast and available-season metadata",
+      "passed": true
+    },
+    {
+      "name": "Preference changes disable the panel and update text size",
+      "passed": true
+    },
+    {
+      "name": "Dynamically inserted cards work and fetch failures show Retry",
+      "passed": true
+    },
+    {
+      "name": "Async results cannot replace the title under a newer hover",
+      "passed": true
+    },
+    {
+      "name": "Metadata parser handles malformed JSON, fallback state, and unsafe data",
+      "passed": true
+    },
+    {
+      "name": "Loaded card metadata works without requesting unavailable detail HTML",
+      "passed": true
+    },
+    {
+      "name": "Panel stays inside a narrow browser viewport",
+      "passed": true
+    }
+  ]
+}
