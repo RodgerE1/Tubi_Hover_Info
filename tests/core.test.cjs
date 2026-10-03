@@ -28,6 +28,15 @@ test("exact IMDb identifiers are validated", () => {
   assert.equal(C.imdbURL("tt12345"), "https://www.imdb.com/title/tt12345/");
   assert.equal(C.imdbURL("https://www.imdb.com/title/tt12345/"), "https://www.imdb.com/title/tt12345/");
   assert.equal(C.imdbURL("https://evil.example/title/tt12345/"), "");
+  assert.equal(C.imdbID("https://www.imdb.com/title/tt12345/"), "tt12345");
+  assert.equal(C.imdbID("not-an-imdb-id"), "");
+});
+test("TMDB keys and ratings are normalized safely", () => {
+  assert.equal(C.apiKey("  1234567890abcdef1234567890abcdef  "), "1234567890abcdef1234567890abcdef");
+  assert.equal(C.apiKey("not a key"), "");
+  assert.deepEqual(C.tmdbRating({ score: 7.36, votes: 1250, id: 123, mediaType: "movie" }), { score: 7.4, votes: 1250, id: 123, mediaType: "movie", url: "https://www.themoviedb.org/movie/123" });
+  assert.equal(C.tmdbLabel({ score: 8, votes: 10, id: 7, mediaType: "tv" }), "TMDB 8.0/10");
+  assert.equal(C.tmdbRating({ score: 0, votes: 0, id: 7, mediaType: "tv" }), null);
 });
 test("invalid preferences fall back and numeric preferences are bounded", () => {
   assert.deepEqual(C.settings(null), C.DEFAULTS);

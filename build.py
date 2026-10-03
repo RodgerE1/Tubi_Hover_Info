@@ -9,10 +9,10 @@ SOURCE = ROOT / "source"
 MANIFEST = {
     "manifest_version": 3,
     "name": "Tubi Hover Info",
-    "version": "1.0.0",
-    "description": "Hover over Tubi movies and shows for their synopsis, cast, director, year, runtime, and genres.",
+    "version": "1.1.0",
+    "description": "Hover over Tubi movies and shows for details and an optional TMDB score.",
     "permissions": ["storage"],
-    "host_permissions": ["https://*.tubitv.com/*", "https://*.tubi.tv/*"],
+    "host_permissions": ["https://*.tubitv.com/*", "https://*.tubi.tv/*", "https://api.themoviedb.org/*"],
     "icons": {str(size): f"icons/icon-{size}.png" for size in (16, 32, 48, 128)},
     "action": {
         "default_title": "Tubi Hover Info settings",
@@ -58,7 +58,7 @@ def build():
     print("Built complete Opera and Firefox directories.")
 
 def package():
-    target = ROOT / "downloads" / "Tubi_Hover_Info_v1.zip"
+    target = ROOT / "downloads" / "Tubi_Hover_Info_v1.1.0.zip"
     target.parent.mkdir(parents=True, exist_ok=True)
     with zipfile.ZipFile(target, "w", compression=zipfile.ZIP_DEFLATED) as archive:
         for path in sorted(ROOT.rglob("*")):

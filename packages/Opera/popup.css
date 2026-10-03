@@ -13,6 +13,12 @@ output { color: #ffe477; font-weight: 600; }
 input[type="range"] { display: block; width: 100%; margin: 12px 0 4px; accent-color: #ffe477; cursor: pointer; }
 section p, #saved { color: #b5c4d9; font-size: 11px; margin: 4px 0; }
 #saved { min-height: 17px; margin: 13px 0; }
+.api-section { margin-top: 20px; }
+.secret-row { display: flex; gap: 7px; margin-top: 9px; }
+.secret-row input { min-width: 0; flex: 1; border: 1px solid #4a596d; border-radius: 7px; background: #202938; color: #f4f6fa; padding: 8px 9px; font: inherit; }
+.secret-row button { border: 1px solid #4a596d; border-radius: 7px; background: #303c4f; color: #f4f6fa; padding: 0 9px; cursor: pointer; }
+.secret-row button:hover { background: #3e4e66; }
+.secret-row input:focus-visible, .secret-row button:focus-visible { outline: 3px solid #9dcaff; outline-offset: 2px; }
 .open-tubi { display: block; background: #ffe477; border-radius: 9px; color: #151b24; padding: 10px; text-align: center; text-decoration: none; font-weight: 700; }
 .open-tubi:hover { background: #fff1b5; }
 .tip { margin: 18px 0 15px; background: #242d3b; padding: 12px; border-radius: 9px; }

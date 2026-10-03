@@ -64,8 +64,40 @@
   }
 
   function imdbURL(value) {
+    const id = imdbID(value);
+    return id ? `https://www.imdb.com/title/${id}/` : "";
+  }
+
+  function imdbID(value) {
     const match = text(value, 300).match(/^(?:https:\/\/(?:www\.)?imdb\.com\/title\/)?(tt\d+)\/?$/);
-    return match ? `https://www.imdb.com/title/${match[1]}/` : "";
+    return match ? match[1] : "";
+  }
+
+  function apiKey(value) {
+    if (typeof value !== "string") return "";
+    const normalized = value.trim();
+    return /^[A-Za-z0-9]{16,128}$/.test(normalized) ? normalized : "";
+  }
+
+  function tmdbRating(value) {
+    if (!value || typeof value !== "object") return null;
+    const score = Number(value.score);
+    const votes = Number(value.votes);
+    const id = Number(value.id);
+    const mediaType = value.mediaType === "tv" ? "tv" : value.mediaType === "movie" ? "movie" : "";
+    if (!Number.isFinite(score) || score <= 0 || score > 10 || !Number.isInteger(id) || id <= 0 || !mediaType) return null;
+    return {
+      score: Math.round(score * 10) / 10,
+      votes: Number.isFinite(votes) && votes > 0 ? Math.floor(votes) : 0,
+      id,
+      mediaType,
+      url: `https://www.themoviedb.org/${mediaType}/${id}`
+    };
+  }
+
+  function tmdbLabel(value) {
+    const rating = tmdbRating(value);
+    return rating ? `TMDB ${rating.score.toFixed(1)}/10` : "";
   }
 
   /* Read serialized page data as JSON, replacing only bare undefined/NaN tokens.
@@ -102,7 +134,7 @@
     return null;
   }
 
-  const api = Object.freeze({ DEFAULTS, titleURL, settings, text, list, duration, imageURL, imdbURL, assignedObject });
+  const api = Object.freeze({ DEFAULTS, titleURL, settings, text, list, duration, imageURL, imdbURL, imdbID, apiKey, tmdbRating, tmdbLabel, assignedObject });
   root.TubiHoverCore = api;
   if (typeof module !== "undefined" && module.exports) module.exports = api;
 })(globalThis);

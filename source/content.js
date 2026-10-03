@@ -29,8 +29,8 @@
     <div class="body"><div class="intro"><img class="poster" hidden alt="" referrerpolicy="no-referrer"><div class="intro-text"><p class="kind"></p><h2 id="thi-title"></h2><div class="facts"></div></div></div>
     <div class="genres"></div><p class="description"></p><dl class="credits"></dl>
     <div class="status" role="status"><span></span><button class="retry" type="button" hidden>Retry</button></div>
-    <div class="actions"><a class="primary tubi-link">Open on Tubi</a><a class="imdb-link" target="_blank" rel="noopener noreferrer">IMDb</a></div>
-    <p class="footer">Details from Tubi \u00b7 Pin to keep open \u00b7 Esc to close</p></div>`;
+    <div class="actions"><a class="primary tubi-link">Open on Tubi</a><a class="imdb-link" target="_blank" rel="noopener noreferrer">IMDb</a><a class="tmdb-link" target="_blank" rel="noopener noreferrer" hidden>TMDB</a></div>
+    <p class="footer">Details from Tubi \u00b7 TMDB score when available \u00b7 Pin to keep open \u00b7 Esc to close</p></div>`;
   shadow.append(panel);
   document.documentElement.append(host);
   const $ = selector => shadow.querySelector(selector);
@@ -83,7 +83,7 @@
     poster.hidden = !preferences.showArtwork || !posterURL;
     const facts = $(".facts");
     facts.replaceChildren();
-    for (const value of [data.year, data.duration, data.rating, data.seasons ? `${data.seasons} season${data.seasons === 1 ? "" : "s"} on Tubi` : ""]) {
+    for (const value of [data.year, data.duration, data.rating, C.tmdbLabel(data.tmdb), data.seasons ? `${data.seasons} season${data.seasons === 1 ? "" : "s"} on Tubi` : ""]) {
       if (!value) continue;
       const span = document.createElement("span"); span.className = "fact"; span.textContent = value; facts.append(span);
     }
@@ -118,6 +118,16 @@
     $(".tubi-link").href = active.url;
     $(".imdb-link").href = C.imdbURL(data.imdb) || `https://www.imdb.com/find/?q=${encodeURIComponent(data.title || "")}&s=tt`;
     $(".imdb-link").textContent = C.imdbURL(data.imdb) ? "IMDb" : "Find on IMDb";
+    const tmdb = C.tmdbRating(data.tmdb);
+    const tmdbLink = $(".tmdb-link");
+    tmdbLink.hidden = !tmdb;
+    if (tmdb) {
+      tmdbLink.href = tmdb.url;
+      tmdbLink.title = tmdb.votes ? `${tmdb.votes.toLocaleString()} TMDB votes` : "Open on TMDB";
+    } else {
+      tmdbLink.removeAttribute("href");
+      tmdbLink.removeAttribute("title");
+    }
     applyAppearance();
   }
 
@@ -156,6 +166,28 @@
     return send({ type: "TUBI_HOVER_FETCH", url: selection.url, force });
   }
 
+  async function loadTMDB(selection, localTicket, data) {
+    if (!data || data.tmdb || !data.title) return;
+    try {
+      const response = await send({
+        type: "TUBI_HOVER_TMDB",
+        imdb: data.imdb || "",
+        title: data.title,
+        year: data.year || ""
+      });
+      if (ticket !== localTicket || active?.key !== selection.key || host.hidden) return;
+      const rating = C.tmdbRating(response.rating);
+      if (!rating) return;
+      const merged = { ...(currentData || data), tmdb: rating };
+      currentData = merged;
+      render(merged);
+      const cached = cache.get(selection.key);
+      if (cached) cache.set(selection.key, { ...cached, data: { ...cached.data, tmdb: rating } });
+    } catch (_) {
+      // TMDB is optional; Tubi details remain fully usable if it is unavailable.
+    }
+  }
+
   function readCard(selection) {
     return new Promise(resolve => {
       const nonce = crypto.randomUUID();
@@ -183,7 +215,9 @@
       const card = await readCard(selection);
       if (ticket !== localTicket || active?.key !== selection.key || host.hidden) return;
       if (card?.description) {
-        render({ ...selection.preview, ...card }); setStatus(); position();
+        const combined = { ...selection.preview, ...card };
+        render(combined); setStatus(); position();
+        void loadTMDB(selection, localTicket, combined);
         cache.set(selection.key, { at: Date.now(), data: card });
         while (cache.size > 80) cache.delete(cache.keys().next().value);
         if (selection.kind !== "series" || card.seasons) return;
@@ -200,7 +234,9 @@
       cache.set(selection.key, { at: Date.now(), data });
       while (cache.size > 80) cache.delete(cache.keys().next().value);
       if (ticket !== localTicket || active?.key !== selection.key || host.hidden) return;
-      render({ ...selection.preview, ...data });
+      const combined = { ...selection.preview, ...data };
+      render(combined);
+      void loadTMDB(selection, localTicket, combined);
       if (!data.description) $(".description").textContent = "Tubi has not provided a synopsis for this title.";
       setStatus();
       position();
@@ -223,10 +259,12 @@
     $(".pin").textContent = "Pin";
     $(".pin").setAttribute("aria-pressed", "false");
     const cached = cache.get(selection.key);
-    if (cached && Date.now() - cached.at < 30 * 60 * 1000) { render(cached.data); setStatus(); position(); return; }
+    if (cached && Date.now() - cached.at < 30 * 60 * 1000) { render(cached.data); setStatus(); position(); void loadTMDB(selection, localTicket, cached.data); return; }
     let pageData = null;
     try { pageData = M.read(document, selection); } catch (_) { /* The detail-page request remains available. */ }
-    render({ ...selection.preview, ...pageData });
+    const initial = { ...selection.preview, ...pageData };
+    render(initial);
+    if (pageData?.imdb) void loadTMDB(selection, localTicket, initial);
     setStatus(pageData?.description ? "Checking title details\u2026" : "Loading details from Tubi\u2026", true);
     position();
     void load(selection, localTicket);

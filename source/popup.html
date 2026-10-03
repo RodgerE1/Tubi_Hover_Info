@@ -8,9 +8,10 @@
     <section><label for="hoverDelay">Hover delay <output id="delayValue" for="hoverDelay">0.45 seconds</output></label><input id="hoverDelay" type="range" min="150" max="1500" step="50" value="450"><p>Increase this if details open too quickly.</p></section>
     <section><label for="fontSize">Text size <output id="fontValue" for="fontSize">16 px</output></label><input id="fontSize" type="range" min="14" max="20" step="1" value="16"></section>
     <label class="toggle artwork"><span>Show poster artwork</span><input id="showArtwork" type="checkbox" checked></label>
+    <section class="api-section"><label for="tmdbApiKey">TMDB API key</label><div class="secret-row"><input id="tmdbApiKey" type="password" autocomplete="off" spellcheck="false" placeholder="Paste your TMDB key"><button id="clearApiKey" type="button">Clear</button></div><p>Optional: adds the TMDB score to hover details. It is stored only in this browser and is never included in the published source.</p></section>
     <p id="saved" role="status">Settings apply to all open Tubi tabs.</p>
     <a class="open-tubi" href="https://tubitv.com/" target="_blank" rel="noopener noreferrer">Open Tubi</a>
     <div class="tip"><strong>Tip</strong><p>Hover over a movie, show, or episode. Move into the panel to read it, or select <b>Pin</b> to keep it open. Press <b>Esc</b> to close.</p></div>
-    <footer>Info comes directly from Tubi. IMDb opens only when you select its link.<br>Version 1.0.0</footer>
+    <footer>Info comes directly from Tubi. IMDb and TMDB open only when you select their links.<br>This product uses the TMDB API but is not endorsed or certified by TMDB.<br>Version 1.1.0</footer>
   </main><script src="core.js"></script><script src="popup.js"></script>
 </body></html>
